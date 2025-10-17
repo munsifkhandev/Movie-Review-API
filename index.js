@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 4455;
 app.use("/api/v1/", userRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Helloo");
+  res.send("Helloo from Server Test Route...");
 });
 
 app.listen(PORT, () => {
