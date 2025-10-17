@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
+const movieRoutes = require("./routes/movieRoutes");
 require("dotenv").config();
 connectDB();
 const app = express();
@@ -9,6 +10,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 4455;
 
 app.use("/api/v1/", userRoutes);
+app.use("/api/movies", movieRoutes);
 
 app.get("/", (req, res) => {
   res.send("Helloo from Server Test Route...");
