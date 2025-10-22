@@ -63,7 +63,58 @@ const getReviewsForMovie = async (req, res) => {
   }
 };
 
+const updateMyReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { comment, rating } = req.body;
+    const userId = req.user.id;
+
+    const review = await Review.findById(reviewId);
+
+    if (!review) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found." });
+    }
+
+    if (review.user.toString() !== userId) {
+      return res.status(401).json({
+        success: false,
+        message: "You are not authorized to update this review.",
+      });
+    }
+
+    const updatedReview = await Review.findByIdAndUpdate(
+      reviewId,
+      { comment, rating },
+      { new: true, runValidators: true }
+    );
+
+    const movieId = updatedReview.movie;
+    const allReviewsForMovie = await Review.find({ movie: movieId });
+    const totalRating = allReviewsForMovie.reduce(
+      (sum, rev) => sum + rev.rating,
+      0
+    );
+    const averageRating =
+      allReviewsForMovie.length > 0
+        ? totalRating / allReviewsForMovie.length
+        : 0;
+    await Movie.findByIdAndUpdate(movieId, { averageRating: averageRating });
+
+    res.status(200).json({
+      success: true,
+      data: updatedReview,
+      message: "Review updated successfully.",
+    });
+  } catch (error) {
+    console.error("Error updating review:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
   addReview,
   getReviewsForMovie,
+  updateMyReview,
 };

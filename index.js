@@ -2,7 +2,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const movieRoutes = require("./routes/movieRoutes");
-
+const reviewRoutes = require("./routes/reviewRoutes");
 require("dotenv").config();
 connectDB();
 const app = express();
@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 4455;
 
 app.use("/api/v1/", userRoutes);
 app.use("/api/v1/movies", movieRoutes);
-
+app.use("/api/v1/reviews", reviewRoutes);
 app.get("/", (req, res) => {
   res.send("Helloo from Server Test Route...");
 });
